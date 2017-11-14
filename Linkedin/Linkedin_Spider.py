@@ -50,15 +50,14 @@ class LinkedinSpider():
         listURL["Test"] = ["https://www.linkedin.com/in/baotrinh"]
         index = 0
         for URL in listURL.keys() : 
-            print("URL : %s" , URL)
+            print("URL : " , URL)
             try :
-            
-                browser.get(URL) 
+                # URL = str(listURL[URL])
+                browser.get("https://www.linkedin.com/in/baotrinh") 
                 print(URL)
                 ID = listURL[URL]
                 time.sleep(2)
-                browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
-                time.sleep(3)    
+                   
                 
                 # KHAI BAO BIEN
                 name = ""
@@ -72,6 +71,8 @@ class LinkedinSpider():
                 company = ""
                 school = ""
 
+                browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
+                time.sleep(3) 
                 try:
                     name = browser.find_element_by_xpath("//*[@class='pv-top-card-section__name Sans-26px-black-85%']").text
                 except NoSuchElementException : 
@@ -157,7 +158,7 @@ class LinkedinSpider():
                 print("----------HERE---------")
                 conn = pypyodbc.connect('Driver={SQL Server};'
 
-                                      'Server=103.15.50.24;'
+                                      'Server=27.0.12.57;'
 
                                       'Database=VINTELLO_STAGING;'
 
@@ -206,7 +207,7 @@ class LinkedinSpider():
                     print(" Scrawled  DONE ! ")
 
             except Exception as e : 
-                print(URL)
+                print(e)
                  # Add to logfile
                 d = {'url': URL}
                 logger = logging.getLogger('tcpserver')

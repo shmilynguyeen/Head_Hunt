@@ -8,6 +8,7 @@ from random import randint
 from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 from random import randint
+import MyConnection
 class  Bing_Linkedin_Spider():
     
     
@@ -17,26 +18,7 @@ class  Bing_Linkedin_Spider():
     timeStart = datetime.now()
     current_URL = ""
 
-    def setCurrentURL (self , url ): 
-        self.current_URL = url
-
-   # Get Connection String
-    def getConnection(self ): 
-        conn = pypyodbc.connect('Driver={SQL Server};'
-
-                                        'Server=27.0.12.57;'
-
-                                        'Database=VINTELLO_STAGING;'
-
-                                        'uid=spider_user;pwd=Spider@123')
-        return conn
-    ## INSERT , UPDATE TO DB !!!
-    def insertUpdateDB(self , squery, value ): 
-        conn = self.getConnection()
-        cursor = conn.cursor()
-        cursor.execute(squery, value)
-        conn.commit()
-        conn.close()
+    
 
 
     def setSpider_ID (self , ID): 
@@ -48,52 +30,52 @@ class  Bing_Linkedin_Spider():
             squery = """UPDATE [Spider_Status] SET [Status] = 0 , [Last_Page_Crawl] =? 
             , [Last_Stop]= ? , [Last_Start] = ? , [URL] = ?  WHERE [Row_ID] = ? """
             value =[ "", datetime.now() , self.timeStart, self.current_URL ,self.Spider_ID ]
-            self.insertUpdateDB(squery, value )
+            MyConnection.insertUpdateDB(squery, value )
         # Enable ! 
         else : 
             squery = """UPDATE [Spider_Status] SET [Status] = 1, [URL] = ?  WHERE [Row_ID] = ? """
             value = [self.current_URL , self.Spider_ID]
-            self.insertUpdateDB(squery, value)
+            MyConnection.insertUpdateDB(squery, value)
             self.timeStart = datetime.now()   
     
     def main(self , country , start , end , ID):
         try: 
-            self.setSpider_ID(ID)
-            self.updateSpiderStatus(1)
-            # GET ALL KEY SEARCH 
+
+            ## GET ALL COMPANY NAME TO  SEARCH  !
             listKey = {}
-            connection = self.getConnection()
+            connection = MyConnection.getConnection()
             cursor = connection.cursor()
             
-            # get commpany Name from Table ThaiLand_Company_ID using to search with Bing!! 
-            SQLCommand = (""" SELECT  DISTINCT DUNS , Company_Name_Clean  FROM Hoover_Company_URL 
-        WHERE Country ='ThaiLand' AND Is_Clean IS NOT NULL and Is_Crawl is NULL AND Row_ID >= ? AND Row_ID < ? """)
+            ## GET COMMPANY NAME  USED TO SEARCH WITH BING!! 
+            SQLCommand = (""" SELECT DISTINCT [D-U-N-S] , Company_Name_Clean FROM Bing_GRS_URL
+            WHERE Company_Name_Clean is not null  AND Is_Crawl is NULL and Row_ID >= ? and Row_ID  < ?   """)
             value = [start, end]
-            cursor.execute(SQLCommand , value)
+            cursor.execute(SQLCommand, value )
             results = cursor.fetchone()
             while results:
-                DUNS_ID =  int(results[0]) # this is Registration Tax of this comapany
+                DUNS_ID =  int(results[0]) # this is DUNS Number this comapany
                 listKey[DUNS_ID] = results[1] # Name of Company
-                # print(DUNS_ID, "-----", results[1])
                 results = cursor.fetchone()
             connection.close()
             
-            browser = webdriver.Chrome() 
-            time.sleep(2)
+            ## Config for browser do not open web browser ! 
+            options = webdriver.ChromeOptions()
+            options.add_argument('headless')
+            browser = webdriver.Chrome(chrome_options=options)  
+            
+            browser.get( "https://www.bing.com/")
+            time.sleep(4)
 
             for duns in listKey.keys():
-                self.setCurrentURL("https://www.bing.com/") 
-                browser.get( "https://www.bing.com/")
-                time.sleep(7)
+                
+                time.sleep(randint(4,10))
 
-                keys = ""
-                print(listKey[duns])
-                keys = " \"Current " +  listKey[duns].strip() +    " \""
-                keys +=  "site: ( linkedin.com/in || linkedin.com/pub)" +   "\"Thailand"  + "\""
+                print("Company Search : " , listKey[duns])
+                keys = " \"VietNam \" " +  " site: linkedin.com/in " + "\"" +   listKey[duns] + " \"" 
                 KeySearch = browser.find_element_by_xpath("//*[@class='b_searchbox']")
                 KeySearch.clear()
                 KeySearch.send_keys(keys) # Truyền tên cty vào để search
-                time.sleep(randint(1,4))
+                time.sleep(randint(2,6))
                 # KeySearch.send_keys(u'\ue007') # Enter search ! 
                 btnSearch = browser.find_element_by_xpath("//*[@id='sb_form_go']").click()
                 sleep = int(randint(3,15))
@@ -104,11 +86,11 @@ class  Bing_Linkedin_Spider():
                     count_2 = 0
                     if(0< len(allRow)):
                         while True : 
-                            timeSpleep = randint(3, 10) #  Random delay time from  3 - 20s
+                            timeSpleep = randint(5, 20) #  Random delay time from  3 - 20s
                             print("TIME DELAY : ", timeSpleep)
                             time.sleep(timeSpleep)
                             if(50 == count_2): 
-                                time.sleep(20)
+                                time.sleep(40)
                                 count_2 = 0
                             allRow = browser.find_elements_by_xpath("//*[@class='b_algo']")
                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
@@ -125,13 +107,15 @@ class  Bing_Linkedin_Spider():
                                 # Save to DB ! 
                                 try:
                                     command = """INSERT INTO [dbo].[Linkedin_getURL]
-                                                ([linkedin_name]
-                                                ,[linkedin_url]
-                                                ,[Country] ,[Linkedin_Type] ,  [Spider_ID] , [DUNS_NUMBER])
-                                            VALUES (?,?,?,?,?,? )"""
-                                    value = [companyName, urls ,  country ,"Profile" ,self.Spider_ID , duns]
-                                    self.insertUpdateDB(command, value)
-                                    print("INSERT DONE ! " , "-- Spider : " , self.Spider_ID)
+                                    ([Linkedin_Name]
+                                    ,[Linkedin_URL]
+                                    ,[DUNS_NUMBER]
+                                    ,[Linkedin_Type]
+                                    ,[Country])
+                                VALUES (?,?,?,?,? )"""
+                                    value = [companyName, urls , duns, "Profile" , country]
+                                    MyConnection.insertUpdateDB(command, value)
+                                    print("INSERT DONE ! " )
                                     count_2 +=1
                                 except Exception as e:
                                     print ("INSERT CRAWL ERROR : " , e)
@@ -142,7 +126,7 @@ class  Bing_Linkedin_Spider():
                 
                 # xác nhận đã search với keyword đó rồi :  
                 try:
-                    command = """UPDATE Hoover_Company_URL  SET Is_Crawl = '1' WHERE  [DUNS]= ?"""
+                    command = """UPDATE Bing_GRS_URL  SET Is_Crawl = '1' WHERE  [D-U-N-S]= ?"""
                     value =[duns]
                     self.insertUpdateDB(command, value)
                     print("UPDATE Crawl DONE ! ")
@@ -151,7 +135,6 @@ class  Bing_Linkedin_Spider():
                     print( "UPDATE Crawl Error : " , e)   
         except Exception as e : 
             print("ERROR IS : ",e)
-            self.updateSpiderStatus(0)
 
 ## Test ! 
 if __name__ == "__main__":
@@ -159,14 +142,14 @@ if __name__ == "__main__":
 
     
 
-# Server VPS 
-    # linkedin_1.main("ThaiLand" , 0,10000,11)
-    # linkedin_1.main("ThaiLand" , 10000,20000,12)
-    # linkedin_1.main("ThaiLand" , 20000,30000,13)
-    # linkedin_1.main("ThaiLand" , 30000,40000,14) # Fin with 40.000
+linkedin_1.main("VietNam" , 0,10000,11)
+# linkedin_1.main("VietNam" , 10000,20000,11)
+# linkedin_1.main("VietNam" , 20000,30000,11)
+# linkedin_1.main("VietNam" , 30000,40000,11)
+# linkedin_1.main("VietNam" , 40000,50000,11)
 
-# Server BA 
-    linkedin_1.main("ThaiLand" , 40000,50000,11)
-    # linkedin_1.main("ThaiLand" , 50000,60000,12)
-    # linkedin_1.main("ThaiLand" , 60000,70000,13)
-    # linkedin_1.main("ThaiLand" , 70000,80000,14) # Fin with 40.000
+# linkedin_1.main("VietNam" , 50000,60000,11)
+# linkedin_1.main("VietNam" , 60000,70000,11)
+# linkedin_1.main("VietNam" , 70000,80000,11)
+# linkedin_1.main("VietNam" , 80000,90000,11)
+
