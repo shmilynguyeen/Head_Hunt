@@ -1,12 +1,6 @@
-import pypyodbc
+import psycopg2
 def getConnection(): 
-    conn = pypyodbc.connect('Driver={SQL Server};'
-
-                                        'Server=SHMILYNGUYEN;'
-
-                                        'Database=Vintello;'
-
-                                        'uid=sa;pwd=1234')
+    conn = psycopg2.connect("dbname='DB_LINKEDIN' user='dbadmin' host='103.1.238.237' password='dbadmin@123'")
     return conn
 
 ## INSERT , UPDATE TO DB !!!

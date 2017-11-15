@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import re
-import pypyodbc
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from random import randint
 from selenium.common.exceptions import NoSuchElementException
@@ -47,8 +46,7 @@ class  Bing_Linkedin_Spider():
             cursor = connection.cursor()
             
             ## GET COMMPANY NAME  USED TO SEARCH WITH BING!! 
-            SQLCommand = (""" SELECT DISTINCT [D-U-N-S] , Company_Name_Clean FROM Bing_GRS_URL
-            WHERE Company_Name_Clean is not null  AND Is_Crawl is NULL and Row_ID >= ? and Row_ID  < ?   """)
+            SQLCommand = ( 'SELECT DISTINCT "D-U-N-S" , "Company_Name_Clean" FROM "Company" WHERE "Company_Name_Clean" is not null  AND "Is_Crawl" is NULL and "Row_ID" >= %s and "Row_ID"  < %s  ' )
             value = [start, end]
             cursor.execute(SQLCommand, value )
             results = cursor.fetchone()
@@ -68,7 +66,7 @@ class  Bing_Linkedin_Spider():
 
             for duns in listKey.keys():
                 
-                time.sleep(randint(4,10))
+                time.sleep(randint(8,25))
 
                 print("Company Search : " , listKey[duns])
                 keys = " \"VietNam \" " +  " site: linkedin.com/in " + "\"" +   listKey[duns] + " \"" 
@@ -86,7 +84,7 @@ class  Bing_Linkedin_Spider():
                     count_2 = 0
                     if(0< len(allRow)):
                         while True : 
-                            timeSpleep = randint(5, 20) #  Random delay time from  3 - 20s
+                            timeSpleep = randint(8, 30) #  Random delay time from  3 - 20s
                             print("TIME DELAY : ", timeSpleep)
                             time.sleep(timeSpleep)
                             if(50 == count_2): 
@@ -106,13 +104,13 @@ class  Bing_Linkedin_Spider():
 
                                 # Save to DB ! 
                                 try:
-                                    command = """INSERT INTO [dbo].[Linkedin_getURL]
-                                    ([Linkedin_Name]
-                                    ,[Linkedin_URL]
-                                    ,[DUNS_NUMBER]
-                                    ,[Linkedin_Type]
-                                    ,[Country])
-                                VALUES (?,?,?,?,? )"""
+                                    command = """INSERT INTO  "Linkedin_URL"
+                                    ("Linkedin_Name"
+                                    ,"Linkedin_URL"
+                                    ,"DUNS_NUMBER"
+                                    ,"Linkedin_Type"
+                                    ,"Country")
+                                VALUES (%s,%s,%s,%s,%s )"""
                                     value = [companyName, urls , duns, "Profile" , country]
                                     MyConnection.insertUpdateDB(command, value)
                                     print("INSERT DONE ! " )
@@ -126,7 +124,7 @@ class  Bing_Linkedin_Spider():
                 
                 # xác nhận đã search với keyword đó rồi :  
                 try:
-                    command = """UPDATE Bing_GRS_URL  SET Is_Crawl = '1' WHERE  [D-U-N-S]= ?"""
+                    command = """UPDATE "Company"  SET "Is_Crawl" = '1' WHERE  "D-U-N-S" = %s """
                     value =[duns]
                     self.insertUpdateDB(command, value)
                     print("UPDATE Crawl DONE ! ")
@@ -142,8 +140,8 @@ if __name__ == "__main__":
 
     
 
-linkedin_1.main("VietNam" , 0,10000,11)
-# linkedin_1.main("VietNam" , 10000,20000,11)
+# linkedin_1.main("VietNam" , 0,10000,11)
+linkedin_1.main("VietNam" , 10000,20000,11)
 # linkedin_1.main("VietNam" , 20000,30000,11)
 # linkedin_1.main("VietNam" , 30000,40000,11)
 # linkedin_1.main("VietNam" , 40000,50000,11)
