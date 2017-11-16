@@ -141,7 +141,7 @@ if __name__ == "__main__":
     
 
 # linkedin_1.main("VietNam" , 0,10000,11)
-linkedin_1.main("VietNam" , 10000,20000,11)
+# linkedin_1.main("VietNam" , 10000,20000,11)
 # linkedin_1.main("VietNam" , 20000,30000,11)
 # linkedin_1.main("VietNam" , 30000,40000,11)
 # linkedin_1.main("VietNam" , 40000,50000,11)
@@ -149,5 +149,5 @@ linkedin_1.main("VietNam" , 10000,20000,11)
 # linkedin_1.main("VietNam" , 50000,60000,11)
 # linkedin_1.main("VietNam" , 60000,70000,11)
 # linkedin_1.main("VietNam" , 70000,80000,11)
-# linkedin_1.main("VietNam" , 80000,90000,11)
+linkedin_1.main("VietNam" , 80000,90000,11)
 
