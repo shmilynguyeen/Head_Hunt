@@ -42,7 +42,7 @@ class LinkedinDetail():
                 try :
                     browser.get(URL) 
                     print(URL)
-                    time.sleep(randint(5,10))
+                    time.sleep(randint(5,20))
 
                     # Show information profile ! 
                     try :
@@ -66,8 +66,12 @@ class LinkedinDetail():
                     connected_Time = ""
                     experiences = ""
 
+                    browser.execute_script("window.scrollTo(0, 500);") #kéo thanh cuộn xuống .
+                    time.sleep(5) 
+                    browser.execute_script("window.scrollTo(0, 1000);") #kéo thanh cuộn xuống .
+                    time.sleep(5)
                     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
-                    time.sleep(3) 
+                    time.sleep(5)
                     try:
                         name = browser.find_element_by_xpath("//*[@class='pv-top-card-section__name Sans-26px-black-85%']").text
                     except Exception as e  : 
@@ -94,6 +98,7 @@ class LinkedinDetail():
                     except Exception as e  : 
                         summary = ""
                    
+
                     try:
                         listExperiences = browser.find_elements_by_xpath("//*[@class='pv-profile-section__card-item pv-position-entity ember-view']")
                         for x in listExperiences: 
@@ -166,9 +171,11 @@ class LinkedinDetail():
                 
                 # ------------SAVE AS DB
                     try :
-                        command = """INSERT INTO  "Linkedin_Detail" (  "Name", "Head_Line", "Company", "Schools ", "Location", "Phone", "Email", "Connected_Date", "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences" ) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                        command = """INSERT INTO  "Linkedin_Detail" (  "Name", "Head_Line", "Company", "Schools ", "Location", "Phone", "Email", "Connected_Date", 
+                        "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences" )
+                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
                         value = [name, headLine, company, education, location, phone, email , connected_Time,
-                        connections, summary,  skills, langaues, course, project, publication, URL, education ]
+                        connections, summary,  skills, langaues, course, project, publication, URL, experiences ]
                         MyConnection.insertUpdateDB(command, value)
                         print("INSERT DONE !")
                     except Exception as e : 
