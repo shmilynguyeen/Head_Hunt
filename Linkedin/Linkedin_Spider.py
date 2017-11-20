@@ -28,15 +28,17 @@ class LinkedinDetail():
             self.getListURL()
             browser = webdriver.Chrome()    
 
+            browser.get("https://www.google.com")
+            time.sleep(20)
             browser.get( "https://www.linkedin.com")
-            time.sleep(3)
+            time.sleep(60)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
             username.send_keys("scrapyvintagedecor@gmail.com")
             password.send_keys("duybaoo19")
             time.sleep(4)
             browser.find_element_by_xpath("//*[@class='login submit-button']").click()   
-            time.sleep(2)
+            time.sleep(randint(10,20))
         
             # GET DEATIL FOR EACH URL IN listURL ! 
             for URL in self.listURL  : 
