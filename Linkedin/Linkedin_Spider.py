@@ -24,6 +24,7 @@ class LinkedinDetail():
 
     def main(self) :
         try : 
+            
             self.getListURL()
             browser = webdriver.Chrome()    
 
@@ -31,7 +32,7 @@ class LinkedinDetail():
             time.sleep(3)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
-            username.send_keys("scrapyvintagedecor@gmail.com")
+            username.send_keys("nguyenduybao19@gmail.com")
             password.send_keys("duybaoo19")
             time.sleep(4)
             browser.find_element_by_xpath("//*[@class='login submit-button']").click()   
@@ -40,7 +41,8 @@ class LinkedinDetail():
             # GET DEATIL FOR EACH URL IN listURL ! 
             for URL in self.listURL  : 
                 try :
-                    browser.get(URL) 
+                    # browser.get(URL) 
+                    browser.get("https://www.linkedin.com/in/vomanhtoan/")
                     print(URL)
                     time.sleep(randint(5,20))
 
@@ -66,12 +68,35 @@ class LinkedinDetail():
                     connected_Time = ""
                     experiences = ""
 
+                    address = ""
+                    website = ""
+                    IM = ""
+                    birthDay = ""
+
+
                     browser.execute_script("window.scrollTo(0, 500);") #kéo thanh cuộn xuống .
                     time.sleep(5) 
                     browser.execute_script("window.scrollTo(0, 1000);") #kéo thanh cuộn xuống .
                     time.sleep(5)
                     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
                     time.sleep(5)
+
+                    try : 
+                        address = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-address']").text
+                    except Exception as e: 
+                        address = ""
+                    try : 
+                        IM = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-ims']").text
+                    except Exception as e : 
+                        IM = ""
+                    try : 
+                        birthDay = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-birthday']").text
+                    except Exception as e : 
+                        birthDay = ""
+                    try : 
+                        website = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-websites']").text
+                    except Exception as e : 
+                        webdriver = ""
                     try:
                         name = browser.find_element_by_xpath("//*[@class='pv-top-card-section__name Sans-26px-black-85%']").text
                     except Exception as e  : 
@@ -172,10 +197,12 @@ class LinkedinDetail():
                 # ------------SAVE AS DB
                     try :
                         command = """INSERT INTO  "Linkedin_Detail" (  "Name", "Head_Line", "Company", "Schools ", "Location", "Phone", "Email", "Connected_Date", 
-                        "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences" )
-                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                        "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences",
+                         "Web", "Address", "BirthDay", "IM" )
+                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
                         value = [name, headLine, company, education, location, phone, email , connected_Time,
-                        connections, summary,  skills, langaues, course, project, publication, URL, experiences ]
+                        connections, summary,  skills, langaues, course, project, publication, URL, experiences,
+                        website, address, birthDay, IM ]
                         MyConnection.insertUpdateDB(command, value)
                         print("INSERT DONE !")
                     except Exception as e : 
