@@ -32,7 +32,7 @@ class LinkedinDetail():
             time.sleep(3)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
-            username.send_keys("nguyenduybao19@gmail.com")
+            username.send_keys("scrapyvintagedecor@gmail.com")
             password.send_keys("duybaoo19")
             time.sleep(4)
             browser.find_element_by_xpath("//*[@class='login submit-button']").click()   
@@ -41,8 +41,8 @@ class LinkedinDetail():
             # GET DEATIL FOR EACH URL IN listURL ! 
             for URL in self.listURL  : 
                 try :
-                    # browser.get(URL) 
-                    browser.get("https://www.linkedin.com/in/vomanhtoan/")
+                    browser.get(URL) 
+                    # browser.get("https://www.linkedin.com/in/vomanhtoan/")
                     print(URL)
                     time.sleep(randint(5,20))
 
