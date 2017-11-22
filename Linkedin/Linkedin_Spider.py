@@ -26,15 +26,15 @@ class LinkedinDetail():
         try : 
             
             self.getListURL()
-            browser = webdriver.Chrome()  
-            # options = webdriver.ChromeOptions()
-            # options.add_argument('headless')
-            # browser = webdriver.Chrome(chrome_options=options)  
+            # browser = webdriver.Chrome()  
+            options = webdriver.ChromeOptions()
+            options.add_argument('headless')
+            browser = webdriver.Chrome(chrome_options=options)  
 
-            # browser.get("https://www.google.com")
-            # time.sleep(20)
+            browser.get("https://www.google.com")
+            time.sleep(20)
             browser.get( "https://www.linkedin.com")
-            # time.sleep(60)
+            time.sleep(60)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
             username.send_keys("scrapyvintagedecor@gmail.com")
