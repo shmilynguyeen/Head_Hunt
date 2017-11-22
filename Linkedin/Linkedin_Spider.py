@@ -1,9 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-import re
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from random import randint
+import re
+from selenium.common.exceptions import NoSuchElementException
 from datetime import datetime
 import MyConnection
 
@@ -26,12 +26,15 @@ class LinkedinDetail():
         try : 
             
             self.getListURL()
-            browser = webdriver.Chrome()    
+            browser = webdriver.Chrome()  
+            # options = webdriver.ChromeOptions()
+            # options.add_argument('headless')
+            # browser = webdriver.Chrome(chrome_options=options)  
 
-            browser.get("https://www.google.com")
-            time.sleep(20)
+            # browser.get("https://www.google.com")
+            # time.sleep(20)
             browser.get( "https://www.linkedin.com")
-            time.sleep(60)
+            # time.sleep(60)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
             username.send_keys("scrapyvintagedecor@gmail.com")
@@ -44,7 +47,7 @@ class LinkedinDetail():
             for URL in self.listURL  : 
                 try :
                     browser.get(URL) 
-                    # browser.get("https://www.linkedin.com/in/vomanhtoan/")
+                    browser.get("https://www.linkedin.com/in/vomanhtoan/")
                     print(URL)
                     time.sleep(randint(5,20))
 
@@ -74,14 +77,21 @@ class LinkedinDetail():
                     website = ""
                     IM = ""
                     birthDay = ""
+                    avatar = ""
 
 
                     browser.execute_script("window.scrollTo(0, 500);") #kéo thanh cuộn xuống .
                     time.sleep(5) 
+                    try : 
+                        avatar = browser.find_element_by_xpath("//*[@class=' presence-entity__image EntityPhoto-circle-8 ember-view']").get_attribute('style')
+                        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', avatar)
+                    except Exception as e: 
+                        avatar = ""
                     browser.execute_script("window.scrollTo(0, 1000);") #kéo thanh cuộn xuống .
                     time.sleep(5)
                     browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
                     time.sleep(5)
+                    
 
                     try : 
                         address = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-address']").text
@@ -98,8 +108,8 @@ class LinkedinDetail():
                     try : 
                         website = browser.find_element_by_xpath("//*[@class='pv-contact-info__contact-type ci-websites']").text
                     except Exception as e : 
-                        webdriver = ""
-                    try:
+                        website = ""
+                    try :
                         name = browser.find_element_by_xpath("//*[@class='pv-top-card-section__name Sans-26px-black-85%']").text
                     except Exception as e  : 
                         name = ""
@@ -200,11 +210,11 @@ class LinkedinDetail():
                     try :
                         command = """INSERT INTO  "Linkedin_Detail" (  "Name", "Head_Line", "Company", "Schools ", "Location", "Phone", "Email", "Connected_Date", 
                         "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences",
-                         "Web", "Address", "BirthDay", "IM" )
-                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                         "Web", "Address", "BirthDay", "IM" ,"Avatar_URL" )
+                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
                         value = [name, headLine, company, education, location, phone, email , connected_Time,
                         connections, summary,  skills, langaues, course, project, publication, URL, experiences,
-                        website, address, birthDay, IM ]
+                        website, address, birthDay, IM , avatar ]
                         MyConnection.insertUpdateDB(command, value)
                         print("INSERT DONE !")
                     except Exception as e : 
