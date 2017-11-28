@@ -46,7 +46,8 @@ class  Bing_Linkedin_Spider():
             cursor = connection.cursor()
             
             ## GET COMMPANY NAME  USED TO SEARCH WITH BING!! 
-            SQLCommand = ( 'SELECT DISTINCT "D-U-N-S" , "Company_Name_Clean" FROM "Company" WHERE "Company_Name_Clean" is not null  AND "Is_Crawl" is NULL and "Row_ID" >= %s and "Row_ID"  < %s  ' )
+            SQLCommand =  """SELECT DISTINCT "D-U-N-S" , "Company_Name_Clean" FROM "Company" WHERE
+             "Company_Name_Clean" is not null  AND "Is_Crawl" is NULL and "Row_ID" >= ? and "Row_ID"  < ?  """
             value = [start, end]
             cursor.execute(SQLCommand, value )
             results = cursor.fetchone()
@@ -124,7 +125,7 @@ class  Bing_Linkedin_Spider():
                 
                 # xác nhận đã search với keyword đó rồi :  
                 try:
-                    command = """UPDATE "Company"  SET "Is_Crawl" = '1' WHERE  "D-U-N-S" = %s """
+                    command = """UPDATE "Company"  SET "Is_Crawl" = '1' WHERE  "D-U-N-S" = ? """
                     value =[duns]
                     self.insertUpdateDB(command, value)
                     print("UPDATE Crawl DONE ! ")
@@ -144,7 +145,7 @@ if __name__ == "__main__":
 # linkedin_1.main("VietNam" , 10000,20000,11)
 # linkedin_1.main("VietNam" , 20000,30000,11)
 # linkedin_1.main("VietNam" , 30000,40000,11)
-# linkedin_1.main("VietNam" , 40000,50000,11)
+linkedin_1.main("VietNam" , 40000,50000,11)
 
 # linkedin_1.main("VietNam" , 50000,60000,11)
 # linkedin_1.main("VietNam" , 60000,70000,11)

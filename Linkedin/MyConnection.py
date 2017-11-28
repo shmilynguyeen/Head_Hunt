@@ -7,7 +7,7 @@ def getConnection():
 
                                         'Database=DB_LINKEDIN;'
 
-                                        'uid=bao.nguyen;pwd=Bao@1234') 
+                                        'uid=bao.nguyen;pwd=Bao@123') 
     return conn
 
 ## INSERT , UPDATE TO DB !!!
