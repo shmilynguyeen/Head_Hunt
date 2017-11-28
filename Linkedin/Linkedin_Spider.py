@@ -12,7 +12,7 @@ class LinkedinDetail():
     FLAG_SCRAWL = False
 
     def getListURL(self ): 
-        sQuery = """ SELECT DISTINCT "Linkedin_URL" from "Linkedin_URL" WHERE "Is_Crawl" is NULL   """ 
+        sQuery = """ SELECT DISTINCT "Linkedin_URL" from "Linkedin_URL" WHERE "Is_Crawl" is NULL AND "Row_ID" < 20000  """ 
         conn = MyConnection.getConnection()
         cursor = conn.cursor()
         cursor.execute(sQuery)
@@ -26,28 +26,28 @@ class LinkedinDetail():
         try : 
             
             self.getListURL()
-            # browser = webdriver.Chrome()  
-            options = webdriver.ChromeOptions()
-            options.add_argument('headless')
-            browser = webdriver.Chrome(chrome_options=options)  
+            browser = webdriver.Chrome()  
+            # options = webdriver.ChromeOptions()
+            # options.add_argument('headless')
+            # browser = webdriver.Chrome(chrome_options=options)  
 
             browser.get("https://www.google.com")
             time.sleep(20)
             browser.get( "https://www.linkedin.com")
-            time.sleep(60)
+            # time.sleep(60)
             username = browser.find_element_by_xpath("//*[@class='login-email']")
             password = browser.find_element_by_xpath("//*[@class='login-password']")
             username.send_keys("scrapyvintagedecor@gmail.com")
             password.send_keys("duybaoo19")
             time.sleep(4)
             browser.find_element_by_xpath("//*[@class='login submit-button']").click()   
-            time.sleep(randint(10,20))
+            time.sleep(randint(20,40))
         
             # GET DEATIL FOR EACH URL IN listURL ! 
             for URL in self.listURL  : 
                 try :
                     browser.get(URL) 
-                    browser.get("https://www.linkedin.com/in/vomanhtoan/")
+                    # browser.get("https://www.linkedin.com/in/vomanhtoan/")
                     print(URL)
                     time.sleep(randint(5,20))
 
@@ -211,7 +211,7 @@ class LinkedinDetail():
                         command = """INSERT INTO  "Linkedin_Detail" (  "Name", "Head_Line", "Company", "Schools ", "Location", "Phone", "Email", "Connected_Date", 
                         "Connection", "Sumary", "Skill", "Language", "Course", "Project", "Publication", "URL" , "Experiences",
                          "Web", "Address", "BirthDay", "IM" ,"Avatar_URL" )
-                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
                         value = [name, headLine, company, education, location, phone, email , connected_Time,
                         connections, summary,  skills, langaues, course, project, publication, URL, experiences,
                         website, address, birthDay, IM , avatar ]
@@ -222,7 +222,7 @@ class LinkedinDetail():
                     time.sleep(randint(5,20))
                     ## Update Crawl with linkedin URL !
                     try : 
-                        command = """UPDATE "Linkedin_URL" SET "Is_Crawl" = '1' WHERE "Linkedin_URL" = %s """
+                        command = """UPDATE "Linkedin_URL" SET "Is_Crawl" = '1' WHERE "Linkedin_URL" = ? """
                         value  = [URL]
                         MyConnection.insertUpdateDB(command, value)
                         print(" Update DONE ! ")

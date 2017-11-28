@@ -110,7 +110,7 @@ class  Bing_Linkedin_Spider():
                                     ,"DUNS_NUMBER"
                                     ,"Linkedin_Type"
                                     ,"Country")
-                                VALUES (%s,%s,%s,%s,%s )"""
+                                VALUES (?,?,?,?,? )"""
                                     value = [companyName, urls , duns, "Profile" , country]
                                     MyConnection.insertUpdateDB(command, value)
                                     print("INSERT DONE ! " )
@@ -149,5 +149,5 @@ if __name__ == "__main__":
 # linkedin_1.main("VietNam" , 50000,60000,11)
 # linkedin_1.main("VietNam" , 60000,70000,11)
 # linkedin_1.main("VietNam" , 70000,80000,11)
-linkedin_1.main("VietNam" , 80000,90000,11)
+# linkedin_1.main("VietNam" , 80000,90000,11)
 
