@@ -65,7 +65,7 @@ class LinkedinDetail():
                         sQuery = """ INSERT INTO public."Linkedin_School"(
                         "School_Name", "Secondary_Title", "Date_Attended", 
                         "Activitive", "Linkedin_URL", "Field_Study")
-                        VALUES (%s, %s, %s, %s, %s, %s) """ 
+                        VALUES (?, ?, ?, ?, ?, ?) """ 
                         value = [school_Name , title , duration, active  , 
                         url ,  field_Study]
 
@@ -95,7 +95,7 @@ class LinkedinDetail():
                         sQuery = """INSERT INTO public."Linkedin_Experiences"(
                             "Position", "Company_Name", "Date_Employee", "Employee_Duration", "Location", 
                             "Description", "URL")
-                            VALUES (%s, %s, %s, %s, %s, %s, %s) """
+                            VALUES (?, ?, ?, ?, ?, ?, ?) """
                         value = [position, company_Name, date_Empl, empl_Duration,
                         location, desctiption, url]
                         
@@ -111,7 +111,7 @@ class LinkedinDetail():
                         for i in temp: 
                             sQuery  = """INSERT INTO public."Linkedin_Skill"(
                             "Skill", "URL")
-                            VALUES (%s,%s)""" 
+                            VALUES (?,?)""" 
                             value = [i.strip(), url]
 
                             MyConnection.insertUpdateDB(sQuery, value)
@@ -121,7 +121,7 @@ class LinkedinDetail():
 
             ## UPDATE Is_Picked for thí URL ! 
                 try : 
-                    sQuery = """  UPDATE "Linkedin_Detail" SET "Is_Picked" = '1'  WHERE "URL" =  %s""" 
+                    sQuery = """  UPDATE "Linkedin_Detail" SET "Is_Picked" = '1'  WHERE "URL" =  ?""" 
                     value = [url]
                     MyConnection.insertUpdateDB(sQuery, value)
                     print("Update DONE ! ")

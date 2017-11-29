@@ -85,6 +85,7 @@ class LinkedinDetail():
                     try : 
                         avatar = browser.find_element_by_xpath("//*[@class=' presence-entity__image EntityPhoto-circle-8 ember-view']").get_attribute('style')
                         urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', avatar)
+                        avatar = urls[0]
                     except Exception as e: 
                         avatar = ""
                     browser.execute_script("window.scrollTo(0, 1000);") #kéo thanh cuộn xuống .
@@ -135,13 +136,14 @@ class LinkedinDetail():
                     except Exception as e  : 
                         summary = ""
                    
-
+                   
                     try:
                         listExperiences = browser.find_elements_by_xpath("//*[@class='pv-profile-section__card-item pv-position-entity ember-view']")
                         for x in listExperiences: 
                             experiences += x.text + "---BREAK---"
                     except Exception as e  : 
                         experiences = ""
+                     
                     education = ""
                     try : 
                         # pv-entity__summary-info
