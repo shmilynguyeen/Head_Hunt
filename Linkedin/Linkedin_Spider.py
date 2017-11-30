@@ -156,8 +156,9 @@ class LinkedinDetail():
                     #  Click show more skill
                     try : 
                         browser.find_element_by_xpath("//*[@class='pv-profile-section__card-action-bar pv-skills-section__additional-skills artdeco-container-card-action-bar']").click()
+                        time.sleep(4)
                     except Exception as e  :
-                        print(e)
+                        print("NOT SHOW MORE SKILL ! ")
                     try:
                         listSkill = browser.find_elements_by_xpath("//*[@class='pv-skill-entity__skill-name truncate Sans-15px-black-85%-semibold inline-block ']")
                         for x in listSkill: 
