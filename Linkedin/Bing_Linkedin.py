@@ -46,8 +46,8 @@ class  Bing_Linkedin_Spider():
             cursor = connection.cursor()
             
             ## GET COMMPANY NAME  USED TO SEARCH WITH BING!! 
-            SQLCommand =  """SELECT DISTINCT "D-U-N-S" , "Company_Name_Clean" FROM "Company" WHERE
-             "Company_Name_Clean" is not null  AND "Is_Crawl" is NULL and "Row_ID" >= ? and "Row_ID"  < ?  """
+            SQLCommand =  """SELECT DISTINCT [D-U-N-S] , [Company_Name_Clean] FROM [Company] WHERE
+             [Company_Name_Clean] is not null  AND [Is_Crawl] is NULL and [Row_ID] >= ? and [Row_ID]  < ?  """
             value = [start, end]
             cursor.execute(SQLCommand, value )
             results = cursor.fetchone()
@@ -105,12 +105,12 @@ class  Bing_Linkedin_Spider():
 
                                 # Save to DB ! 
                                 try:
-                                    command = """INSERT INTO  "Linkedin_URL"
-                                    ("Linkedin_Name"
-                                    ,"Linkedin_URL"
-                                    ,"DUNS_NUMBER"
-                                    ,"Linkedin_Type"
-                                    ,"Country")
+                                    command = """INSERT INTO  [Linkedin_URL]
+                                    ([Linkedin_Name]
+                                    ,[Linkedin_URL]
+                                    ,[DUNS_NUMBER]
+                                    ,[Linkedin_Type]
+                                    ,[Country])
                                 VALUES (?,?,?,?,? )"""
                                     value = [companyName, urls , duns, "Profile" , country]
                                     MyConnection.insertUpdateDB(command, value)
@@ -125,9 +125,9 @@ class  Bing_Linkedin_Spider():
                 
                 # xác nhận đã search với keyword đó rồi :  
                 try:
-                    command = """UPDATE "Company"  SET "Is_Crawl" = '1' WHERE  "D-U-N-S" = ? """
+                    command = """UPDATE [Company]  SET [Is_Crawl] = 1 WHERE  [D-U-N-S] = ? """
                     value =[duns]
-                    self.insertUpdateDB(command, value)
+                    MyConnection.insertUpdateDB(command, value)
                     print("UPDATE Crawl DONE ! ")
                     time.sleep(2)
                 except Exception as e : 
