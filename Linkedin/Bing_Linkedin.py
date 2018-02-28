@@ -56,7 +56,7 @@ class  Bing_Linkedin_Spider():
                 listKey[DUNS_ID] = results[1] # Name of Company
                 results = cursor.fetchone()
             connection.close()
-            
+            print("--------------> Total Size : " , len(listKey))
             ## Config for browser do not open web browser ! 
             options = webdriver.ChromeOptions()
             options.add_argument('headless')
@@ -67,7 +67,7 @@ class  Bing_Linkedin_Spider():
 
             for duns in listKey.keys():
                 
-                time.sleep(randint(8,25))
+                time.sleep(randint(8,15))
 
                 print("Company Search : " , listKey[duns])
                 keys = " \"VietNam \" " +  " site: linkedin.com/in " + "\"" +   listKey[duns] + " \"" 
@@ -85,7 +85,7 @@ class  Bing_Linkedin_Spider():
                     count_2 = 0
                     if(0< len(allRow)):
                         while True : 
-                            timeSpleep = randint(8, 30) #  Random delay time from  3 - 20s
+                            timeSpleep = randint(5, 10) #  Random delay time from  3 - 20s
                             print("TIME DELAY : ", timeSpleep)
                             time.sleep(timeSpleep)
                             if(50 == count_2): 
@@ -93,6 +93,7 @@ class  Bing_Linkedin_Spider():
                                 count_2 = 0
                             allRow = browser.find_elements_by_xpath("//*[@class='b_algo']")
                             browser.execute_script("window.scrollTo(0, document.body.scrollHeight);") #kéo thanh cuộn xuống .
+                            print("--------> Page Size : " , len(allRow))
                             for x in allRow: 
                                 txt = x.text
                                 temp = txt.split()

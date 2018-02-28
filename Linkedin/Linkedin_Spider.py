@@ -26,6 +26,8 @@ class LinkedinDetail():
         try : 
             
             self.getListURL()
+            ## Config for browser do not open web browser ! 
+            # options = webdriver.ChromeOptions()
             browser = webdriver.Chrome()  
             # options = webdriver.ChromeOptions()
             # options.add_argument('headless')

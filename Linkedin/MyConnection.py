@@ -3,11 +3,11 @@ def getConnection():
     # conn = psycopg2.connect("dbname='DB_LINKEDIN' user='dbadmin' host='103.1.238.237' password='dbadmin@123'")
     conn = pypyodbc.connect('Driver={SQL Server};'
 
-                                        'Server=103.1.238.237;'
+                                        'Server=SHMILYNGUYEN;'
 
-                                        'Database=DB_LINKEDIN;'
+                                        'Database=DB_HeadHunt;'
 
-                                        'uid=bao.nguyen;pwd=Bao@123') 
+                                        'uid=sa;pwd=1234') 
     return conn
 
 ## INSERT , UPDATE TO DB !!!
